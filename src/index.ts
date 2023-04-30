@@ -20,12 +20,81 @@ function setItemsOnBoard(): void {
   }
 }
 
+/// REFRESH BOARD
+
 refreshButton.addEventListener('click', refresh);
 
 function refresh(): void {
   itemsIdArray = shuffleArray(itemsIdArray);
   matrix = getMatrix(itemsIdArray);
   setItemsOnBoard();
+}
+
+/// MOVE ITEMS ON BOARD
+
+
+board.addEventListener('click', e => {
+  const buttonNode: HTMLElement = (e.target as HTMLElement).closest('button')!;
+
+  console.log(buttonNode.getAttribute('data-matrix-id'));
+
+  if (!buttonNode) return;
+
+  const itemId = Number(buttonNode.getAttribute('data-matrix-id'));
+  const activeItemCoords = getActiveItemCoords(itemId);
+  // const emptyItemCoords = getActiveItemCoords(16);
+
+  if (isAvailableToMove(activeItemCoords)) {
+    console.log(true);
+  } else {
+    console.log(false);
+  }
+});
+
+function getActiveItemCoords(itemId: number): Coords {
+  for (let y = 0; y < matrix.length; y++) {
+    for (let x = 0; x < matrix[y].length; x++) {
+
+      if (matrix[y][x] == itemId) {
+        return {y, x};
+      }
+    }
+  }
+
+  return {};
+}
+
+type Coords = {
+  x?: number;
+  y?: number;
+};
+
+function isAvailableToMove(activeItemCoords: Coords): boolean {
+  if (matrix[activeItemCoords.y! - 1]) {
+    if (matrix[activeItemCoords.y! - 1][activeItemCoords.x!] == 16) {
+      return true;
+    }
+  }
+
+  if (matrix[activeItemCoords.y! + 1]) {
+    if (matrix[activeItemCoords.y! + 1][activeItemCoords.x!] == 16) {
+      return true;
+    }
+  }
+
+  if (matrix[activeItemCoords.x! - 1]) {
+    if (matrix[activeItemCoords.y!][activeItemCoords.x! - 1] == 16) {
+      return true;
+    }
+  }
+
+  if (matrix[activeItemCoords.x! + 1]) {
+    if (matrix[activeItemCoords.y!][activeItemCoords.x! + 1] == 16) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /// HELPERS
